@@ -57,10 +57,11 @@ exports.getMyProducts = catchAsync(async (req, res, next) => {
 
 exports.getProductByShopAndCategory = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-
+  console.log(id);
   if (!(await Shop.findById(id))) {
     return next(new AppError('Invalid Link or the shop does not exist.', 400));
   }
+  const shop = await Shop.findById(id);
 
   // const products = await Shop.find({ _id: id });
   // console.log(products);
@@ -70,6 +71,7 @@ exports.getProductByShopAndCategory = catchAsync(async (req, res, next) => {
     status: 'success',
     results: products.length,
     products: products,
+    shop: shop,
   });
 });
 

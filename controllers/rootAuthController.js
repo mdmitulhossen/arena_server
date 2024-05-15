@@ -31,15 +31,15 @@ const sendToken = function (user, res) {
 exports.protect = Model => catchAsync(async (req, res, next) => {
   let token;
 
-  // if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-  //   token = req.headers.authorization.split(' ')[1];
-  // } else if (req.cookies.jwt) {
-  //   token = req.cookies.jwt;
-  // }
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
 
-  // if (!token) {
-  //   return next(new AppError('No token Provided. Bad Request.', 400));
-  // }
+  if (!token) {
+    return next(new AppError('No token Provided. Bad Request.', 400));
+  }
 
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET_KEY);
   const user = await Model.findById(decoded.id).select('+password');

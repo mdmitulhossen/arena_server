@@ -11,13 +11,14 @@ router.get('/addDummyShops', shopController.addDummyShops);
 router.post('/login', shopAuthController.login);
 router.post('/signup', shopAuthController.signup);
 router.post('/forgotPassword', shopAuthController.forgotPassword);
+router.get('/:id', shopController.getProductByShopAndCategory);
 router.patch('/resetPassword/:token', shopAuthController.resetPassword);
 router.get('/:pid/totalItems', shopController.getTotalItems);
 
 // router.get('/myProducts', shopAuthController.protect, shopController.getMyProducts);
 
 
-router.get('/:id', shopController.getProductByShopAndCategory);
+
 
 router.use(shopAuthController.protect);
 router.patch('/updateMyPassword', shopAuthController.updateMyPassword);
