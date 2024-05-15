@@ -6,40 +6,40 @@ const bcrypt = require('bcrypt');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
 
-const createToken =  function (id) {
-  return jwt.sign({id}, process.env.JWT_SECRET_KEY, {
+const createToken = function (id) {
+  return jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXP_TIME
   });
-}; 
+};
 
-const sendToken =  function (user, res) {
+const sendToken = function (user, res) {
   const token = createToken(user._id);
 
   const options = {
     expires: new Date(Date.now() + process.env.COOKIE_EXP_TIME * 24 * 60 * 60 * 1000),
-    httpOnly: true, 
+    httpOnly: true,
   }
 
   res.cookie('jwt', token, options);
   res.status(200).json({
     status: 'success',
-    token, 
-    user, 
+    token,
+    user,
   });
 };
 
 exports.protect = Model => catchAsync(async (req, res, next) => {
   let token;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer') ) {
-    token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) {
-    token = req.cookies.jwt;
-  }
+  // if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  //   token = req.headers.authorization.split(' ')[1];
+  // } else if (req.cookies.jwt) {
+  //   token = req.cookies.jwt;
+  // }
 
-  if (!token) {
-    return next(new AppError('No token Provided. Bad Request.', 400));
-  }
+  // if (!token) {
+  //   return next(new AppError('No token Provided. Bad Request.', 400));
+  // }
 
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET_KEY);
   const user = await Model.findById(decoded.id).select('+password');
@@ -58,7 +58,7 @@ exports.protect = Model => catchAsync(async (req, res, next) => {
 
 
 exports.login = Model => catchAsync(async (req, res, next) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
   if (!email || !password) {
     return next(new AppError('Email or password not provided.', 400));
   }
@@ -71,14 +71,15 @@ exports.login = Model => catchAsync(async (req, res, next) => {
 });
 
 
-exports.signup = Model => catchAsync(async(req, res, next) => {
+exports.signup = Model => catchAsync(async (req, res, next) => {
   const data = {
-    name : req.body.name, 
-    email : req.body.email,
-    phone : req.body.phone, 
-    password :  req.body.password, 
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
+    password: req.body.password,
   };
 
+  console.log(data)
   const user = await Model.create(data);
   return sendToken(user, res);
 });
@@ -87,16 +88,16 @@ exports.signup = Model => catchAsync(async(req, res, next) => {
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return next (new AppError('You are not authorized to make this request', 403));
+      return next(new AppError('You are not authorized to make this request', 403));
     }
     next();
   }
 };
 
-exports.forgotPassword = Model => catchAsync(async(req, res, next) => {
+exports.forgotPassword = Model => catchAsync(async (req, res, next) => {
 
   // req a mail ase.. 
-  const user = await Model.findOne({email : req.body.email});
+  const user = await Model.findOne({ email: req.body.email });
 
   console.log(user, req.body.email);
   if (!user) {
@@ -104,7 +105,7 @@ exports.forgotPassword = Model => catchAsync(async(req, res, next) => {
   }
 
   let resetToken = user.createPasswordResetToken();
-  await user.save({ validateBeforeSave : false });
+  await user.save({ validateBeforeSave: false });
   // next();
   const resetURL = `${req.protocol}://${req.get(
     'host'
@@ -117,34 +118,35 @@ exports.forgotPassword = Model => catchAsync(async(req, res, next) => {
 
   try {
     await sendEmail({
-      email : user.email, 
-      subject : 'Password Reset Token. Expires in 10 mins.',
-      message, 
+      email: user.email,
+      subject: 'Password Reset Token. Expires in 10 mins.',
+      message,
     });
 
     res.status(200).json({
-      status:'success',
-      message : 'A token has been sent to your email.',
+      status: 'success',
+      message: 'A token has been sent to your email.',
     });
   } catch (ex) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
-    await user.save({validateBeforeSave: false});
+    await user.save({ validateBeforeSave: false });
 
     return next(new AppError('There was a problem sending token. Please try again later', 500));
   }
 });
- 
 
-exports.resetPassword = Model => catchAsync(async(req, res, next) => {
+
+exports.resetPassword = Model => catchAsync(async (req, res, next) => {
   const hashedPassword = crypto
-  .createHash('sha256')
-  .update(req.params.token)
-  .digest('hex');
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
 
   console.log(req.params);
 
-  const user = await Model.findOne({passwordResetToken : hashedPassword, passwordResetExpires: { $gt: Date.now() } 
+  const user = await Model.findOne({
+    passwordResetToken: hashedPassword, passwordResetExpires: { $gt: Date.now() }
   });
 
   if (!user) {
@@ -157,16 +159,16 @@ exports.resetPassword = Model => catchAsync(async(req, res, next) => {
   return sendToken(user, res);
 });
 
-exports.updateMyPassword = Model => catchAsync (async(req, res, next) => {
+exports.updateMyPassword = Model => catchAsync(async (req, res, next) => {
   const { user } = req;
-  
+
   if (!(await user.isCorrectPassword(req.body.currentPassword, user.password))) {
     return next(new AppError('Current Password do not match.', 403));
   }
 
   user.password = req.body.password;
   await user.save();
- 
+
   console.log(user);
   res.status(200).json({
     status: 'success',

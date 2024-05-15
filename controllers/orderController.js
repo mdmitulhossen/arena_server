@@ -16,6 +16,24 @@ exports.getUserOrders = catchAsync(async (req, res, next) => {
 }
 );
 
+exports.addCustomOrder = catchAsync(async (req, res, next) => {
+  const order = {
+    customer: req.user._id,
+    customOrder : req.body.customOrder,
+    totalPrice: req.body.totalPrice,
+    shippingAddress: req.body.shippingAddress,
+    paymentMethod: req.body.paymentMethod,
+  };
+  console.log(order,"sfjusfsa");
+  const data = await Order.create(order);
+
+  res.status(200).json({
+    status: 'success',
+    data: data,
+  });
+
+});
+
 exports.getShopOrders = catchAsync(async (req, res, next) => {
   const orders = await Shop.find({ _id: req.user._id });
   // console.log(orders);
@@ -86,11 +104,11 @@ exports.placeOrder = catchAsync(async (req, res, next) => {
     const product = await Product.findById(orderItems[i].product);
     // console.log(product);
 
-    for (let size of product.sizes) {
-      if (size.size == orderItems[i].size) {
-        size.quantity = size.quantity - orderItems[i].quantity;
-      }
-    }
+    // for (let size of product.sizes) {
+    //   if (size.size == orderItems[i].size) {
+    //     size.quantity = size.quantity - orderItems[i].quantity;
+    //   }
+    // }
 
     // const updatedProduct = await product.save();
     await product.save();

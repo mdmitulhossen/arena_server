@@ -8,10 +8,10 @@ exports.getAllProduct = catchAsync(async (req, res, next) => {
     status: 'success',
     data: products,
   });
-}); 
+});
 
 exports.getProductById = catchAsync(async (req, res, next) => {
-  
+
   const product = await Product.findById(req.params.id).populate(['shop', 'reviews']);
   if (product == null || product == undefined) {
     return next(new AppError('Product Not Found!', 404));
@@ -23,7 +23,7 @@ exports.getProductById = catchAsync(async (req, res, next) => {
 
 });
 
-exports.updateProductById = catchAsync(async(req, res, next) => {
+exports.updateProductById = catchAsync(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
 
   if (product == null) {
@@ -40,7 +40,7 @@ exports.updateProductById = catchAsync(async(req, res, next) => {
   });
 });
 
-exports.deleteProductById = catchAsync(async(req, res, next) => {
+exports.deleteProductById = catchAsync(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
 
   if (product == null) {
@@ -65,30 +65,31 @@ exports.addDesign = catchAsync(async (req, res, next) => {
 
 exports.addProduct = catchAsync(async (req, res, next) => {
 
-  const { user } = req;
+  // const { user } = req;
 
-  if (!user.verified) {
-    return next(new AppError('Please verify your shop to add product.', 400));
-  }
+  // if (!user.verified) {
+  //   return next(new AppError('Please verify your shop to add product.', 400));
+  // }
 
   const product = {
-    name : req.body.name,
+    name: req.body.name,
     category: req.body.category,
-    price : req.body.price,
-    shop : req.user._id,    
-    sizes: req.body.sizes,  
+    price: req.body.price,
+    shop: req.params.id,
+    sizes: req.body.sizes,
     imageUrls: req.body.imageUrls,
+    // discription: req.body.discription,
   };
-  
-  // console.log(product);
+
+  console.log(product);
   if (req.body.discount) product.discount = req.body.discount;
   if (req.body.description) product.description = req.body.description;
 
   const saved = await Product.create(product);
-  
+
   res.status(200).json({
     status: 'success',
-    data: saved, 
+    data: saved,
   });
 });
 
@@ -102,7 +103,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
 
 exports.getLatestProducts = catchAsync(async (req, res, next) => {
 
-  const products = await Product.find().sort({createdAt: -1});
+  const products = await Product.find().sort({ createdAt: -1 });
 
   res.status(200).json({
     status: "Processing...",
@@ -112,7 +113,7 @@ exports.getLatestProducts = catchAsync(async (req, res, next) => {
 
 exports.getTopRatedProducts = catchAsync(async (req, res, next) => {
 
-  const products = await Product.find().sort({rating: -1});
+  const products = await Product.find().sort({ rating: -1 });
 
   res.status(200).json({
     status: "Processing...",
@@ -122,7 +123,7 @@ exports.getTopRatedProducts = catchAsync(async (req, res, next) => {
 });
 
 
-exports.searchProduct = catchAsync(async(req, res, next) => {
+exports.searchProduct = catchAsync(async (req, res, next) => {
 
   const query = req.body.productName;
   const queryParts = query.split(/\s+/);
@@ -141,7 +142,7 @@ const dummyData = require('./../utils/addDummyProducts');
 exports.addDummyProducts = catchAsync(async (req, res, next) => {
 
   let products = dummyData.dummyData;
-  
+
   products.forEach(product => {
     product.shop = req.user.id;
   });

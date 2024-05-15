@@ -8,9 +8,9 @@ const crypto = require('crypto');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please enter your name!'],
-    maxlength: [50, 'Name must have maximum of 50 characters'],
-    minlength: [5, 'Name must have at least 5 characters'],
+    // required: [true, 'Please enter your name!'],
+    // maxlength: [50, 'Name must have maximum of 50 characters'],
+    // minlength: [5, 'Name must have at least 5 characters'],
     trim: true,
   },
   email: {
@@ -23,14 +23,14 @@ const userSchema = new mongoose.Schema({
   },
   phone: { 
     type: String,
-    unique: true,
-    validate: [validator.isNumeric, 'Phone Number must only conatain numbers and not associated with any other accounts.'],
+    // unique: true,
+    // validate: [validator.isNumeric, 'Phone Number must only conatain numbers and not associated with any other accounts.'],
     select: false, 
   },
   password: { 
     type: String,
     required: [true, 'Please provide a password'],
-    minlength: 8,
+    minlength: 6,
     select: false,
   },
   passwordChangedAt: Date,

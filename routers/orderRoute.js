@@ -5,6 +5,7 @@ const orderController = require('../controllers/orderController');
 const userAuthController = require('../controllers/userAuthController');
 const shopAuthController = require('../controllers/shopAuthController');
 
+router.post('/addcustom', userAuthController.protect, orderController.addCustomOrder);
 
 router.get('/:id',
     userAuthController.protect,
@@ -16,6 +17,8 @@ router.post('/placeOrder',
     userAuthController.restrictTo('user'),
     orderController.placeOrder
 );
+
+
 
 
 // router.get('/view/:id', 

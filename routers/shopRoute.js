@@ -13,13 +13,17 @@ router.post('/signup', shopAuthController.signup);
 router.post('/forgotPassword', shopAuthController.forgotPassword);
 router.patch('/resetPassword/:token', shopAuthController.resetPassword);
 router.get('/:pid/totalItems', shopController.getTotalItems);
+
+// router.get('/myProducts', shopAuthController.protect, shopController.getMyProducts);
+
+
 router.get('/:id', shopController.getProductByShopAndCategory);
 
 router.use(shopAuthController.protect);
 router.patch('/updateMyPassword', shopAuthController.updateMyPassword);
 router.get('/me', shopController.getMe);
 router.get('/updateInfo', shopController.updateInfo);
-router.get('/myProducts', shopController.getMyProducts);
+
 
 
 

@@ -11,6 +11,12 @@ const orderSchema = new mongoose.Schema({
 
   customDesignUrl: { type: String },
 
+  customOrder: {
+    url: {type: String},
+    color: {type: String},
+    quantity: {type: String},
+  },
+
   orderItems: [{
     product: {
       type: mongoose.Schema.Types.ObjectId,
@@ -35,26 +41,13 @@ const orderSchema = new mongoose.Schema({
 
 
   shippingAddress: {
-    type: {
-      fullName: {
-        type: String,
-        required: true,
-      },
-      address: {
-        type: String,
-        required: true,
-      },
-      city: {
-        type: String,
-        required: true,
-      }
-    }
+    type: String,
   },
 
   paymentMethod: {
     type: String,
-    required: true,
-    enum: ['Cash', 'Online'],
+    // required: true,
+    // enum: ['Cash', 'Online'],
 
   },
 

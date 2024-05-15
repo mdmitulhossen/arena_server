@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
   name : {
     type : String, 
-    required: [true, 'Product must have a name.'], 
+    // required: [true, 'Product must have a name.'], 
   },
 
   category : {
@@ -13,14 +13,13 @@ const productSchema = new mongoose.Schema({
       values : ['tShirt', 'Pant', 'Jersey'],
       message : 'Product must be one of these provided category.'
     },
-    required : [true, 'Select a Product Category.'],
+    // required : [true, 'Select a Product Category.'],
   },
 
 
   price : {
     type: Number, 
-    required : [true, 'A product must have price.'],
-    min : [1, 'Price must be greater than 0.'],
+    
   },
 
   discount : {
@@ -47,16 +46,17 @@ const productSchema = new mongoose.Schema({
     ref: 'shop',
   },
 
+
   sizes: [
     {
       size: {
         type: String,
-        required: true,
+        // required: true,
       }, 
       quantity: {
         type: Number,
         min : [0, 'Quantity can not be less than 0.'],
-        required: true,
+        // required: true,
       }
     }
   ],

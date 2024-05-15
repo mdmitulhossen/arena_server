@@ -12,10 +12,12 @@ router.patch('/resetPassword/:token', userAuthController.resetPassword);
 // Make Sure User Logged In.
 router.use(userAuthController.protect);
 
-router.post('/updateme', 
-    userAuthController.protect, 
+router.post('/updateme',
+    userAuthController.protect,
     userController.updateMe
 );
+
+// router.get(':id', userController.get)
 
 router.get('/me', userController.getMe);
 router.patch('/updateMyPassword', userAuthController.updateMyPassword);

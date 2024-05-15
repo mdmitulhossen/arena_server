@@ -6,24 +6,24 @@ const crypto = require('crypto');
 const shopSchema = new mongoose.Schema ({
   name : {
     type : String,
-    required: [true, 'A shop must have a name'],
-    unique: [true, 'A shop with this name already exists.'],
-    minlenth: [1, 'Shop must have a name.'],
-    maxlength: [20, 'Shop name must be at most 20 characters'],
+    // required: [true, 'A shop must have a name'],
+    // unique: [true, 'A shop with this name already exists.'],
+    // minlenth: [1, 'Shop must have a name.'],
+    // maxlength: [20, 'Shop name must be at most 20 characters'],
   },
 
   email: {
     type: String,
     required: [true, 'Please enter your Email'],
     unique: [true, 'This email is not acceptable'],
-    lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email'],
+    // lowercase: true,
+    // validate: [validator.isEmail, 'Please provide a valid email'],
     trim: true,
   },
   phone: { 
     type: String,
-    unique: true,
-    validate: [validator.isNumeric, 'Phone Number must only conatain numbers and not associated with any other accounts.'],
+    // unique: true,
+    // validate: [validator.isNumeric, 'Phone Number must only conatain numbers and not associated with any other accounts.'],
     // select: false,
   },
   verified : {
@@ -85,6 +85,8 @@ const shopSchema = new mongoose.Schema ({
     designs: [{type: String}], 
     price : {type: Number},
   },
+
+  
   productSaleCount: {
     type: Number,
     default : 0,
